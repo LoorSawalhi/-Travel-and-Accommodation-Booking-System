@@ -1,9 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TravelAndAccommodationBookingPlatform.Domain.Models;
+using City = TravelAndAccommodationBookingPlatform.Db.Models.City;
+using Hotel = TravelAndAccommodationBookingPlatform.Db.Models.Hotel;
+using Reservation = TravelAndAccommodationBookingPlatform.Db.Models.Reservation;
+using Room = TravelAndAccommodationBookingPlatform.Db.Models.Room;
+using User = TravelAndAccommodationBookingPlatform.Db.Models.User;
 
 namespace TravelAndAccommodationBookingPlatform.Db.Data;
 
-public partial class HotelsBookingSystemContext : DbContext
+public class HotelsBookingSystemContext : DbContext
 {
     public HotelsBookingSystemContext(DbContextOptions<HotelsBookingSystemContext> options)
         : base(options) {}
@@ -107,6 +111,9 @@ public partial class HotelsBookingSystemContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
+            entity.Property(e => e.RoomId)
+                .HasMaxLength(10)
+                .HasColumnName("Room_Number");
             entity.Property(e => e.AdultsCount).HasColumnName("Adults_count");
             entity.Property(e => e.Availability)
                 .HasMaxLength(50)
@@ -116,7 +123,7 @@ public partial class HotelsBookingSystemContext : DbContext
             entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
 
             entity.HasOne(d => d.Hotel).WithMany(p => p.Rooms)
-                .HasForeignKey(d => d.HotelId)
+                .HasForeignKey(d => d.HotelId).OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK__Room__Hotel_ID__3C69FB99");
         });
 

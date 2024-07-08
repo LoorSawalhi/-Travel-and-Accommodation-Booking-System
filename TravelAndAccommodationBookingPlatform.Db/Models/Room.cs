@@ -1,7 +1,10 @@
-﻿namespace TravelAndAccommodationBookingPlatform.Domain.Models;
+﻿namespace TravelAndAccommodationBookingPlatform.Db.Models;
 
 public partial class Room
 {
+    public int Id { get; set; }
+
+    public string RoomId { get; set; }
     public int HotelId { get; set; }
 
     public string Availability { get; set; }
@@ -12,7 +15,7 @@ public partial class Room
 
     public decimal Price { get; set; }
 
-    public virtual Hotel Hotel { get; set; }
+    public virtual Hotel? Hotel { get; set; }
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 }

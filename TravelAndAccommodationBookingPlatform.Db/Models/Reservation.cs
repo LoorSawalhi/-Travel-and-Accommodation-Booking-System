@@ -1,7 +1,9 @@
-﻿namespace TravelAndAccommodationBookingPlatform.Domain.Models;
+﻿namespace TravelAndAccommodationBookingPlatform.Db.Models;
 
-public partial class Reservation
+public class Reservation
 {
+    public int Id { get; set; }
+
     public int UserId { get; set; }
 
     public int HotelId { get; set; }

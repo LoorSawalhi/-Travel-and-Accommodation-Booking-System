@@ -2,7 +2,7 @@
 using TravelAndAccommodationBookingPlatform.Domain.IServices;
 using TravelAndAccommodationBookingPlatform.Domain.Models;
 
-namespace TravelAndAccommodationBookingPlatform.Domain.Sevices;
+namespace TravelAndAccommodationBookingPlatform.Domain.Services;
 
 public class CityService : ICityService
 {
