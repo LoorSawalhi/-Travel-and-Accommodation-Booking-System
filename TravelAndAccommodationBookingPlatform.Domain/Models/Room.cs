@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TravelAndAccommodationBookingPlatform.Db.Models;
+﻿namespace TravelAndAccommodationBookingPlatform.Domain.Models;
 
 public partial class Room
 {

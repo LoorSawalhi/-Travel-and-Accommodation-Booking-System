@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using TravelAndAccommodationBookingPlatform.Domain.Models;
 
-namespace TravelAndAccommodationBookingPlatform.Db.Models;
+namespace TravelAndAccommodationBookingPlatform.Db.Data;
 
 public partial class HotelsBookingSystemContext : DbContext
 {

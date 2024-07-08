@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace TravelAndAccommodationBookingPlatform.Db.Models;
+namespace TravelAndAccommodationBookingPlatform.Db.Data;
 
 public class HotelsBookingSystemContextFactory : IDesignTimeDbContextFactory<HotelsBookingSystemContext>
 {

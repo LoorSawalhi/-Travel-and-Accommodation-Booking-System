@@ -1,4 +1,4 @@
-﻿namespace TravelAndAccommodationBookingPlatform.Db.Models;
+﻿namespace TravelAndAccommodationBookingPlatform.Domain.Models;
 
 public partial class City
 {
