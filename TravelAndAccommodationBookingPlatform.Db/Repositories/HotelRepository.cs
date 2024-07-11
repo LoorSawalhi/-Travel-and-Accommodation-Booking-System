@@ -1,4 +1,5 @@
-﻿using TravelAndAccommodationBookingPlatform.Db.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TravelAndAccommodationBookingPlatform.Db.Data;
 using TravelAndAccommodationBookingPlatform.Db.Mappers;
 using TravelAndAccommodationBookingPlatform.Domain.IRepository;
 using TravelAndAccommodationBookingPlatform.Domain.Models;
@@ -16,27 +17,32 @@ public class HotelRepository : IHotelRepository
         _mapper = mapper;
     }
 
-    public IQueryable<Hotel> GetHotelByName(string hotelName)
+    public async Task<IEnumerable<Hotel>> GetHotelByName(string hotelName)
     {
-        return _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
-            .Where(hotel => hotel.Name.Equals(hotelName, StringComparison.InvariantCultureIgnoreCase));
+        var hotels =  await _context.Hotels
+            .Where(hotel => hotel.Name.ToLower().Contains(hotelName.ToLower()))
+            .ToListAsync();
+        return hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel));
     }
 
-    public IQueryable<Hotel> GetHotelByStarRating(int starRating)
+    public async Task<IEnumerable<Hotel>> GetHotelByStarRating(int starRating)
     {
-        return _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
-            .Where(hotel => hotel.StarRating == starRating);
+        return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
+            .Where(hotel => hotel.StarRating == starRating)
+            .ToListAsync();
     }
 
-    public IQueryable<Hotel> GetHotelByPriceRange(decimal minPrice, decimal maxPrice)
+    public async Task<IEnumerable<Hotel>> GetHotelByPriceRange(decimal minPrice, decimal maxPrice)
     {
-        return _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
-            .Where(hotel => hotel.MinPrice >= minPrice && hotel.MaxPrice <= maxPrice);
+        return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
+            .Where(hotel => hotel.MinPrice >= minPrice && hotel.MaxPrice <= maxPrice)
+            .ToListAsync();
     }
 
-    public IQueryable<Hotel> GetHotelByCityName(string cityName)
+    public async Task<IEnumerable<Hotel>> GetHotelByCityName(string cityName)
     {
-        return _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
-            .Where(hotel => hotel.City.Name.Equals(cityName, StringComparison.InvariantCultureIgnoreCase));
+        return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
+            .Where(hotel => hotel.City.Name.Equals(cityName, StringComparison.InvariantCultureIgnoreCase))
+            .ToListAsync();
     }
 }

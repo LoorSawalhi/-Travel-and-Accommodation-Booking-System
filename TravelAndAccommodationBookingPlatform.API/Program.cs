@@ -1,31 +1,99 @@
-using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
+using TravelAndAccommodationBookingPlatform.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+builder.Services.AddVersionedApiExplorer(setupAction =>
+    {
+        setupAction.SubstituteApiVersionInUrl = true;
+    }
+);
+
+builder.Services.AddDatabaseConfiguration(builder.Configuration);
+
+builder.Services.AddBusinessServices()
+    .AddRepositories()
+    .AddDbMappers()
+    .AddApiMappers()
+    .AddValidators();
 
 builder.Services.AddControllers();
+    // .AddNewtonsoftJson();
 
-// builder.Services.AddDbContext<HotelsBookingSystemContext>(
-//     options => options.UseSqlServer(
-//         builder.Configuration.GetConnectionString("DefaultConnection")
-//     ));
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// builder.Services.AddAuthentication("Bearer")
+//     .AddJwtBearer(options =>
+//         {
+//             options.TokenValidationParameters = new()
+//             {
+//                 ValidateIssuer = true,
+//                 ValidateAudience = true,
+//                 ValidateIssuerSigningKey = true,
+//                 ValidIssuer = builder.Configuration["Authentication:Issuer"],
+//                 ValidAudience = builder.Configuration["Authentication:Audience"],
+//                 IssuerSigningKey = new SymmetricSecurityKey(
+//                     Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
+//             };
+//         }
+//     );
+
+builder.Services.AddApiVersioning(setupAction =>
+    {
+        setupAction.ReportApiVersions = true;
+        setupAction.AssumeDefaultVersionWhenUnspecified = true;
+        setupAction.DefaultApiVersion = new ApiVersion(1, 0);
+    }
+).AddMvc();
+
+var apiVersionDescriptionProvider = builder.Services.BuildServiceProvider()
+    .GetRequiredService<IApiVersionDescriptionProvider>();
+
+builder.Services.AddSwaggerGen(setupAction =>
+{
+    foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+    {
+        setupAction.SwaggerDoc(
+            $"{description.GroupName}",
+            new OpenApiInfo
+            {
+                Title = "Restaurant Management API",
+                Version = description.ApiVersion.ToString()
+            }
+            );
+    }
+    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+    setupAction.IncludeXmlComments(xmlCommentsFullPath);
+});
+
+// builder.Services.AddValidators();
+// builder.Services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(setupAction =>
+    {
+        var descriptions =apiVersionDescriptionProvider.ApiVersionDescriptions;
+        foreach (var description in descriptions)
+        {
+            setupAction.SwaggerEndpoint(
+                $"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
 
 app.UseAuthorization();
 
