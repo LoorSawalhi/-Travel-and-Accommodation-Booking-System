@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Sieve.Models;
+using Sieve.Services;
 using TravelAndAccommodationBookingPlatform.Db.Data;
 using TravelAndAccommodationBookingPlatform.Db.Mappers;
 using TravelAndAccommodationBookingPlatform.Domain.IRepository;
@@ -10,11 +13,18 @@ public class HotelRepository : IHotelRepository
 {
     private readonly HotelsBookingSystemContext _context;
     private readonly HotelMapper _mapper;
+    private readonly CityMapper _cityMapper;
+    private readonly ILogger<HotelRepository> _logger;
+    private readonly ISieveProcessor _sieveProcessor;
 
-    public HotelRepository(HotelsBookingSystemContext context, HotelMapper mapper)
+    public HotelRepository(ISieveProcessor sieveProcessor, HotelsBookingSystemContext context,
+        HotelMapper mapper,CityMapper cityMapper, ILogger<HotelRepository> logger)
     {
         _context = context;
         _mapper = mapper;
+        _cityMapper = cityMapper;
+        _logger = logger;
+        _sieveProcessor = sieveProcessor;
     }
 
     public async Task<IEnumerable<Hotel>> GetHotelByName(string hotelName)
@@ -27,9 +37,10 @@ public class HotelRepository : IHotelRepository
 
     public async Task<IEnumerable<Hotel>> GetHotelByStarRating(int starRating)
     {
-        return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
+        var hotels = await _context.Hotels
             .Where(hotel => hotel.StarRating == starRating)
             .ToListAsync();
+        return hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel));
     }
 
     public async Task<IEnumerable<Hotel>> GetHotelByPriceRange(decimal minPrice, decimal maxPrice)
@@ -44,5 +55,23 @@ public class HotelRepository : IHotelRepository
         return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
             .Where(hotel => hotel.City.Name.Equals(cityName, StringComparison.InvariantCultureIgnoreCase))
             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Hotel>> GetAllHotels(SieveModel sieveModel)
+    {
+        var result = await _sieveProcessor.Apply(sieveModel, _context.Hotels)
+            .Include(hotel =>hotel.City).ToListAsync();
+
+        return result.Select(hotel => new
+            {
+                hotel = _mapper.MapFromDbToDomain(hotel),
+                city = _cityMapper.MapFromDbToDomain(hotel.City)
+            })
+            .ToList()
+            .Select(h =>
+            {
+                h.hotel.City = h.city;
+                return h.hotel;
+            });
     }
 }

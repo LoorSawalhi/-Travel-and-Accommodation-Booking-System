@@ -1,20 +1,14 @@
-﻿namespace TravelAndAccommodationBookingPlatform.API.DTOs;
+﻿using Sieve.Attributes;
 
-public partial class HotelDto
+namespace TravelAndAccommodationBookingPlatform.API.DTOs;
+
+public class HotelDto
 {
     public string Name { get; set; }
-
     public int StarRating { get; set; }
-
-    public string Owner { get; set; }
-
-    public int CityId { get; set; }
-
     public decimal MinPrice { get; set; }
-
     public decimal MaxPrice { get; set; }
-
     public string Type { get; set; }
-
+    
     public string CityName { get; set; }
 }

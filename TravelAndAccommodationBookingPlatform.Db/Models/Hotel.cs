@@ -1,11 +1,15 @@
-﻿namespace TravelAndAccommodationBookingPlatform.Db.Models;
+﻿using Sieve.Attributes;
 
-public partial class Hotel
+namespace TravelAndAccommodationBookingPlatform.Db.Models;
+
+public class Hotel
 {
     public int Id { get; set; }
-
+    
+    [Sieve(CanFilter = true, CanSort = true)]
     public string Name { get; set; }
-
+    
+    [Sieve(CanFilter = true, CanSort = true)]
     public int StarRating { get; set; }
 
     public string Owner { get; set; }
@@ -15,12 +19,13 @@ public partial class Hotel
     public decimal MinPrice { get; set; }
 
     public decimal MaxPrice { get; set; }
-
+    
+    [Sieve(CanFilter = true, CanSort = true)]
     public string Type { get; set; }
 
-    public virtual Db.Models.City City { get; set; }
+    public City City { get; set; }
 
-    public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 
-    public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
+    public ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

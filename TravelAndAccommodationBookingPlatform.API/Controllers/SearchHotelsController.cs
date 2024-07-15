@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Sieve.Models;
 using TravelAndAccommodationBookingPlatform.API.DTOs;
 using TravelAndAccommodationBookingPlatform.API.Mappers;
 using TravelAndAccommodationBookingPlatform.Domain.IServices;
@@ -16,25 +16,16 @@ namespace TravelAndAccommodationBookingPlatform.API.Controllers;
 public class SearchHotelsController(IHotelService hotelService, HotelMapper mapper) : ControllerBase
 {
     /// <summary>
-    /// Search hotel by name
+    /// Search on hotels
     /// </summary>
-    /// <response code="200">Returns hotels by name</response>
+    /// <response code="200">Returns matched hotels</response>
+    //
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<HotelDto>> GetHotelByName([FromQuery] string? name)
+    public async Task<ActionResult<HotelDto>> SearchHotel([FromQuery] SieveModel sieveModel)
     {
-        // using var scope = _logger.BeginScope(new
-        // {
-        //     Class = "soso",
-        // });
-        //
-        if (name.IsNullOrEmpty())
-            name = "";
-        
-        var hotels = await hotelService.FindHotelsByNameAsync(name);
-        if (hotels.IsNullOrEmpty())
-            return NoContent();
-        var hotelDto = hotels.Select(mapper.MapFromDomainToAPI);
-        return Ok(hotelDto);
+        var models = await hotelService.FindHotelsAsync(sieveModel);
+        var hotels = models.Select(mapper.MapFromDomainToAPI);
+        return Ok(hotels);
     }
 }

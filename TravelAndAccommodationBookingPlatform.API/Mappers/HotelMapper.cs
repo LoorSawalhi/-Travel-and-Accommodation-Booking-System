@@ -8,5 +8,17 @@ namespace TravelAndAccommodationBookingPlatform.API.Mappers;
 public partial class HotelMapper
 {
     public partial Hotel MapFromAPIToDomain(HotelDto hotel);
-    public partial HotelDto MapFromDomainToAPI(Hotel hotel);
+
+    public HotelDto MapFromDomainToAPI(Hotel hotel)
+    {
+        return new HotelDto
+        {
+            Name = hotel.Name,
+            StarRating = hotel.StarRating,
+            MinPrice = hotel.MinPrice,
+            MaxPrice = hotel.MaxPrice,
+            Type = hotel.Type,
+            CityName = hotel.City.Name 
+        };
+    }
 }

@@ -2,13 +2,15 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Sieve.Models;
+using Sieve.Services;
 using TravelAndAccommodationBookingPlatform.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-
+builder.Services.AddScoped<ISieveProcessor, SieveProcessor>();
 builder.Services.AddVersionedApiExplorer(setupAction =>
     {
         setupAction.SubstituteApiVersionInUrl = true;
@@ -22,6 +24,13 @@ builder.Services.AddBusinessServices()
     .AddDbMappers()
     .AddApiMappers()
     .AddValidators();
+builder.Services.Configure<SieveOptions>(configuration =>
+{
+    configuration.CaseSensitive = false; // Example configuration
+    configuration.DefaultPageSize = 25;  // Set default page size
+    configuration.MaxPageSize = 100;     // Set maximum page size
+    configuration.ThrowExceptions = true; // Enable exceptions to diagnose issues
+});
 
 builder.Services.AddControllers();
     // .AddNewtonsoftJson();

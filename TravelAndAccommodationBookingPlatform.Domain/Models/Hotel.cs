@@ -1,6 +1,6 @@
 ﻿namespace TravelAndAccommodationBookingPlatform.Domain.Models;
 
-public partial class Hotel
+public class Hotel
 {
     public int Id { get; set; }
 
@@ -18,9 +18,9 @@ public partial class Hotel
 
     public string Type { get; set; }
 
-    public virtual City City { get; set; }
+    public City City { get; set; }
 
-    public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 
-    public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
+    public ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

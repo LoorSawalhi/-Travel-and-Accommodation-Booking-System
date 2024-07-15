@@ -1,4 +1,5 @@
-﻿using TravelAndAccommodationBookingPlatform.Domain.Models;
+﻿using Sieve.Models;
+using TravelAndAccommodationBookingPlatform.Domain.Models;
 
 namespace TravelAndAccommodationBookingPlatform.Domain.IRepository;
 
@@ -8,4 +9,5 @@ public interface IHotelRepository
     Task<IEnumerable<Hotel>> GetHotelByStarRating(int starRating);
     Task<IEnumerable<Hotel>> GetHotelByPriceRange(decimal minPrice, decimal maxPrice);
     Task<IEnumerable<Hotel>> GetHotelByCityName(string cityName);
+    Task<IEnumerable<Hotel>> GetAllHotels(SieveModel sieveModel);
 }
