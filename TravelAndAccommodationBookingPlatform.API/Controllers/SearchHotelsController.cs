@@ -18,7 +18,7 @@ public class SearchHotelsController(IHotelService hotelService, HotelMapper mapp
     /// <summary>
     /// Search on hotels
     /// </summary>
-    /// <response code="200">Returns matched hotels</response>
+    /// <response code="200">Returns matched hotels based on query</response>
     //
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
