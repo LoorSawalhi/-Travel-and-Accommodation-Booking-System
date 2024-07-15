@@ -22,7 +22,7 @@ public class SearchController(IHotelService hotelService, ICityService cityServi
     /// </summary>
     /// <response code="200">Returns matched hotels based on query</response>
     //
-    [HttpGet("/hotels")]
+    [HttpGet("hotels")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<HotelDto>> SearchHotel([FromQuery] SieveModel sieveModel)
     {
@@ -36,7 +36,7 @@ public class SearchController(IHotelService hotelService, ICityService cityServi
     /// </summary>
     /// <response code="200">Returns matched cities based on query</response>
     //
-    [HttpGet("/cities")]
+    [HttpGet("cities")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<HotelDto>> SearchCities([FromQuery] SieveModel sieveModel)
     {
