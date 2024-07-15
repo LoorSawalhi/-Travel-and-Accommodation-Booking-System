@@ -9,63 +9,55 @@ using TravelAndAccommodationBookingPlatform.Domain.Models;
 
 namespace TravelAndAccommodationBookingPlatform.Db.Repositories;
 
-public class HotelRepository : IHotelRepository
+public class HotelRepository(
+    ISieveProcessor sieveProcessor,
+    HotelsBookingSystemContext context,
+    HotelMapper mapper,
+    CityMapper cityMapper,
+    ILogger<HotelRepository> logger)
+    : IHotelRepository
 {
-    private readonly HotelsBookingSystemContext _context;
-    private readonly HotelMapper _mapper;
-    private readonly CityMapper _cityMapper;
-    private readonly ILogger<HotelRepository> _logger;
-    private readonly ISieveProcessor _sieveProcessor;
-
-    public HotelRepository(ISieveProcessor sieveProcessor, HotelsBookingSystemContext context,
-        HotelMapper mapper,CityMapper cityMapper, ILogger<HotelRepository> logger)
-    {
-        _context = context;
-        _mapper = mapper;
-        _cityMapper = cityMapper;
-        _logger = logger;
-        _sieveProcessor = sieveProcessor;
-    }
+    private readonly ILogger<HotelRepository> _logger = logger;
 
     public async Task<IEnumerable<Hotel>> GetHotelByName(string hotelName)
     {
-        var hotels =  await _context.Hotels
+        var hotels =  await context.Hotels
             .Where(hotel => hotel.Name.ToLower().Contains(hotelName.ToLower()))
             .ToListAsync();
-        return hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel));
+        return hotels.Select(hotel => mapper.MapFromDbToDomain(hotel));
     }
 
     public async Task<IEnumerable<Hotel>> GetHotelByStarRating(int starRating)
     {
-        var hotels = await _context.Hotels
+        var hotels = await context.Hotels
             .Where(hotel => hotel.StarRating == starRating)
             .ToListAsync();
-        return hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel));
+        return hotels.Select(hotel => mapper.MapFromDbToDomain(hotel));
     }
 
     public async Task<IEnumerable<Hotel>> GetHotelByPriceRange(decimal minPrice, decimal maxPrice)
     {
-        return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
+        return await context.Hotels.Select(hotel => mapper.MapFromDbToDomain(hotel))
             .Where(hotel => hotel.MinPrice >= minPrice && hotel.MaxPrice <= maxPrice)
             .ToListAsync();
     }
 
     public async Task<IEnumerable<Hotel>> GetHotelByCityName(string cityName)
     {
-        return await _context.Hotels.Select(hotel => _mapper.MapFromDbToDomain(hotel))
+        return await context.Hotels.Select(hotel => mapper.MapFromDbToDomain(hotel))
             .Where(hotel => hotel.City.Name.Equals(cityName, StringComparison.InvariantCultureIgnoreCase))
             .ToListAsync();
     }
 
     public async Task<IEnumerable<Hotel>> GetAllHotels(SieveModel sieveModel)
     {
-        var result = await _sieveProcessor.Apply(sieveModel, _context.Hotels)
+        var result = await sieveProcessor.Apply(sieveModel, context.Hotels)
             .Include(hotel =>hotel.City).ToListAsync();
 
         return result.Select(hotel => new
             {
-                hotel = _mapper.MapFromDbToDomain(hotel),
-                city = _cityMapper.MapFromDbToDomain(hotel.City)
+                hotel = mapper.MapFromDbToDomain(hotel),
+                city = cityMapper.MapFromDbToDomain(hotel.City)
             })
             .ToList()
             .Select(h =>

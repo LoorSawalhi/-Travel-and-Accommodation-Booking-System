@@ -8,6 +8,8 @@ namespace TravelAndAccommodationBookingPlatform.Db.Mappers;
 [Mapper]
 public partial class CityMapper 
 {
+    [MapperIgnoreSource(nameof(City.Hotels))]
+
     public partial CityDomain MapFromDbToDomain(City city);
     public partial City MapFromDomainToDb(CityDomain city);
 }

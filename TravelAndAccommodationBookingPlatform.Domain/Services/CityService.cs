@@ -1,4 +1,5 @@
-﻿using TravelAndAccommodationBookingPlatform.Domain.IRepository;
+﻿using Sieve.Models;
+using TravelAndAccommodationBookingPlatform.Domain.IRepository;
 using TravelAndAccommodationBookingPlatform.Domain.IServices;
 using TravelAndAccommodationBookingPlatform.Domain.Models;
 
@@ -16,5 +17,10 @@ public class CityService : ICityService
     public IQueryable<City> FindCityByName(string name)
     {
         return _cityRepository.GetCityByName(name);
+    }
+
+    public async  Task<IEnumerable<City>> FindCitiesAsync(SieveModel sieveModel)
+    {
+        return await _cityRepository.GetAllCitiesAsync(sieveModel);
     }
 }
