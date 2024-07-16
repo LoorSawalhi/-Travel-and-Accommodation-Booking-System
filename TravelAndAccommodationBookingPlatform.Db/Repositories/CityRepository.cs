@@ -35,16 +35,5 @@ public class CityRepository : ICityRepository
             .Include(city => city.Hotels).ToListAsync();
 
         return result.Select(city => _cityMapper.MapFromDbToDomain(city));
-        // .Select(city => new
-        // {
-        //     // hotel = _hotelMapper.MapFromDbToDomain(city.Hotels),
-        //     city = _cityMapper.MapFromDbToDomain(city)
-        // })
-        // .ToList()
-        // .Select(h =>
-        // {
-        //     h.hotel.City = h.city;
-        //     return h.hotel;
-        // });
     }
 }

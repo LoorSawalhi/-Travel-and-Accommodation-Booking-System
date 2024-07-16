@@ -16,7 +16,7 @@ public partial class Reservation
 
     public decimal Discount { get; set; }
 
-    public virtual Hotel Hotel { get; set; }
+    public virtual Hotel? Hotel { get; set; }
 
     public virtual Room Room { get; set; }
 

@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Sieve.Models;
 using Sieve.Services;
 using TravelAndAccommodationBookingPlatform.API;
+using TravelAndAccommodationBookingPlatform.API.CustomMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,43 +66,48 @@ builder.Services.AddApiVersioning(setupAction =>
 var apiVersionDescriptionProvider = builder.Services.BuildServiceProvider()
     .GetRequiredService<IApiVersionDescriptionProvider>();
 
-builder.Services.AddSwaggerGen(setupAction =>
-{
-    foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-    {
-        setupAction.SwaggerDoc(
-            $"{description.GroupName}",
-            new OpenApiInfo
-            {
-                Title = "Restaurant Management API",
-                Version = description.ApiVersion.ToString()
-            }
-            );
-    }
-    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
-    setupAction.IncludeXmlComments(xmlCommentsFullPath);
-});
+// builder.Services.AddSwaggerGen(setupAction =>
+// {
+//     foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+//     {
+//         setupAction.SwaggerDoc(
+//             $"{description.GroupName}",
+//             new OpenApiInfo
+//             {
+//                 Title = "Restaurant Management API",
+//                 Version = description.ApiVersion.ToString()
+//             }
+//             );
+//     }
+//     var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+//     var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+//     setupAction.IncludeXmlComments(xmlCommentsFullPath);
+// });
 
 // builder.Services.AddValidators();
 // builder.Services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(setupAction =>
-    {
-        var descriptions =apiVersionDescriptionProvider.ApiVersionDescriptions;
-        foreach (var description in descriptions)
-        {
-            setupAction.SwaggerEndpoint(
-                $"/swagger/{description.GroupName}/swagger.json",
-                description.GroupName.ToUpperInvariant());
-        }
-    });
+    app.UseDeveloperExceptionPage();
+    // app.UseSwagger();
+    // app.UseSwaggerUI(setupAction =>
+    // {
+    //     var descriptions =apiVersionDescriptionProvider.ApiVersionDescriptions;
+    //     foreach (var description in descriptions)
+    //     {
+    //         setupAction.SwaggerEndpoint(
+    //             $"/swagger/{description.GroupName}/swagger.json",
+    //             description.GroupName.ToUpperInvariant());
+    //     }
+    // });
 }
+
+// app.UseStatusCodePages();
 
 app.UseAuthentication();
 

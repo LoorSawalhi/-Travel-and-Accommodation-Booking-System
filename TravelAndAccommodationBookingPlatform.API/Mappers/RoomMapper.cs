@@ -7,6 +7,6 @@ namespace TravelAndAccommodationBookingPlatform.API.Mappers;
 [Mapper]
 public partial class RoomMapper
 {
-    public partial RoomDto MapFromDbToDomain(Room room);
-    public partial Room MapFromDomainToDb(RoomDto room);
+    public partial RoomDto MapFromApiToDomain(Room room);
+    public partial Room MapFromDomainToApi(RoomDto room);
 }

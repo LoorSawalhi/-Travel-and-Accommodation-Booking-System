@@ -1,5 +1,6 @@
 ﻿using Sieve.Models;
 using Sieve.Services;
+using TravelAndAccommodationBookingPlatform.Domain.Exceptions;
 using TravelAndAccommodationBookingPlatform.Domain.IRepository;
 using TravelAndAccommodationBookingPlatform.Domain.IServices;
 using TravelAndAccommodationBookingPlatform.Domain.Models;
@@ -15,9 +16,13 @@ public class HotelService(IHotelRepository hotelRepository)
         return await hotelRepository.GetAllHotels(sieveModel);
     }
 
-    public async Task<IEnumerable<Hotel>> FindHotelsByNameAsync(string name)
+    public async Task<Hotel> FindHotelsByNameAsync(string name)
     {
-        return await hotelRepository.GetHotelByName(name);
+        var hotel = await hotelRepository.GetHotelByName(name);
+        if (hotel == null)
+            throw new HotelNotFound($"No existing hotel with such name {name}");
+        
+        return (await hotelRepository.GetHotelByName(name))!;
     }
 
     public async Task<IEnumerable<Hotel>> FindHotelsByRatingAsync(int rating)

@@ -19,12 +19,19 @@ public class HotelRepository(
 {
     private readonly ILogger<HotelRepository> _logger = logger;
 
-    public async Task<IEnumerable<Hotel>> GetHotelByName(string hotelName)
+    public async Task<Hotel?> GetHotelByName(string hotelName)
     {
-        var hotels =  await context.Hotels
-            .Where(hotel => hotel.Name.ToLower().Contains(hotelName.ToLower()))
-            .ToListAsync();
-        return hotels.Select(hotel => mapper.MapFromDbToDomain(hotel));
+        var hotel =  await context.Hotels
+            .Where(hotel => hotel.Name.ToLower().Equals(hotelName.ToLower()))
+            .Include(hotel => hotel.City)
+            .FirstOrDefaultAsync();
+
+        if (hotel == null) return null;
+        
+        var mappedHotel = mapper.MapFromDbToDomain(hotel);
+        var city = cityMapper.MapFromDbToDomain(hotel.City);
+        mappedHotel!.City = city;
+        return mappedHotel;
     }
 
     public async Task<IEnumerable<Hotel>> GetHotelByStarRating(int starRating)

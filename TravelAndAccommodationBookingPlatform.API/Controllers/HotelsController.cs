@@ -2,7 +2,9 @@
 using Sieve.Models;
 using TravelAndAccommodationBookingPlatform.API.DTOs;
 using TravelAndAccommodationBookingPlatform.API.Mappers;
+using TravelAndAccommodationBookingPlatform.Domain.Exceptions;
 using TravelAndAccommodationBookingPlatform.Domain.IServices;
+using TravelAndAccommodationBookingPlatform.Domain.Models;
 
 namespace TravelAndAccommodationBookingPlatform.API.Controllers;
 
@@ -27,5 +29,28 @@ public class HotelsController(IHotelService hotelService, HotelMapper hotelMappe
         var models = await hotelService.FindHotelsAsync(sieveModel);
         var hotels = models.Select(hotelMapper.MapFromDomainToAPI);
         return Ok(hotels);
+    }
+    
+    /// <summary>
+    /// List hotel details by its name
+    /// </summary>
+    /// <response code="200"/>Returns details of hotel/response>
+    //
+    [HttpGet("{hotelName}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<HotelDto>> ListHotelDetails(string hotelName)
+    {
+        try
+        {
+            var details = await hotelService.FindHotelsByNameAsync(hotelName);
+            var apiDetails = hotelMapper.MapFromDomainToAPI(details);
+            return Ok(apiDetails);
+        }
+        catch (HotelNotFound ex)
+        {
+            return NotFound(ex.Message);
+        }
+  
+        
     }
 }

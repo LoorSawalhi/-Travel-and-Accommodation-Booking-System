@@ -1,6 +1,6 @@
 ﻿namespace TravelAndAccommodationBookingPlatform.API.DTOs;
 
-public partial class RoomDto
+public class RoomDto
 {
     public string HotelName { get; set; }
 
