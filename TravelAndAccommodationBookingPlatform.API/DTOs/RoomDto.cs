@@ -2,8 +2,7 @@
 
 public class RoomDto
 {
-    public string HotelName { get; set; }
-
+    // public string HotelName { get; set; }
     public string Availability { get; set; }
 
     public int AdultsCount { get; set; }

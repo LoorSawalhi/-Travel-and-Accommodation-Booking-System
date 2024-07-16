@@ -14,10 +14,10 @@ public class HotelRepository(
     HotelsBookingSystemContext context,
     HotelMapper mapper,
     CityMapper cityMapper,
+    RoomMapper roomMapper,
     ILogger<HotelRepository> logger)
     : IHotelRepository
 {
-    private readonly ILogger<HotelRepository> _logger = logger;
 
     public async Task<Hotel?> GetHotelByName(string hotelName)
     {
@@ -72,5 +72,12 @@ public class HotelRepository(
                 h.hotel.City = h.city;
                 return h.hotel;
             });
+    }
+
+    public async Task<IEnumerable<Room>> GetHotelRooms(int hotelId)
+    {
+        var rooms = await context.Rooms.Where(room => room.HotelId == hotelId
+        && room.Availability.Equals("Available")).ToListAsync();
+        return rooms.Select(roomMapper.MapFromDbToDomain);
     }
 }

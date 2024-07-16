@@ -15,7 +15,7 @@ namespace TravelAndAccommodationBookingPlatform.API.Controllers;
 [ApiController]
 [Route("/api/{version:apiVersion}/hotels")]
 [ApiVersion("1")]
-public class HotelsController(IHotelService hotelService, HotelMapper hotelMapper) : ControllerBase
+public class HotelsController(IHotelService hotelService, HotelMapper hotelMapper, RoomMapper roomMapper) : ControllerBase
 {
     /// <summary>
     /// Search on hotels
@@ -35,9 +35,11 @@ public class HotelsController(IHotelService hotelService, HotelMapper hotelMappe
     /// List hotel details by its name
     /// </summary>
     /// <response code="200"/>Returns details of hotel/response>
+    /// <response code="404"/>When no matched hotels/response>
     //
     [HttpGet("{hotelName}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<HotelDto>> ListHotelDetails(string hotelName)
     {
         try
@@ -50,7 +52,26 @@ public class HotelsController(IHotelService hotelService, HotelMapper hotelMappe
         {
             return NotFound(ex.Message);
         }
-  
-        
+    }
+    
+    /// <summary>
+    /// List hotel details by its name
+    /// </summary>
+    /// <response code="200"/>Returns details of hotel/response>
+    //
+    [HttpGet("{hotelName}/rooms")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<RoomDto>> ListHotelAvailableRooms(string hotelName)
+    {
+        try
+        {
+            var rooms = await hotelService.FindHotelsRoomsAsync(hotelName);
+            var apiDetails = rooms.Select(roomMapper.MapFromDomainToApi);
+            return Ok(apiDetails);
+        }
+        catch (HotelNotFound ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }

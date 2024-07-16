@@ -8,6 +8,7 @@ namespace TravelAndAccommodationBookingPlatform.Db.Mappers;
 [Mapper]
 public partial class RoomMapper
 {
+    [MapperIgnoreSource(nameof(Room.Hotel))]
     public partial RoomDomain MapFromDbToDomain(Room room);
     public partial Room MapFromDomainToDb(RoomDomain room);
 }

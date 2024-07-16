@@ -29,4 +29,15 @@ public class HotelService(IHotelRepository hotelRepository)
     {
         return await hotelRepository.GetHotelByStarRating(rating);
     }
+
+    public async Task<IEnumerable<Room>> FindHotelsRoomsAsync(string hotelName)
+    {
+        var hotel = await hotelRepository.GetHotelByName(hotelName);
+        if (hotel == null)
+            throw new HotelNotFound($"No existing hotel with such name {hotelName}");
+
+        var rooms = await hotelRepository.GetHotelRooms(hotel.Id);
+        
+        return rooms;
+    }
 }
